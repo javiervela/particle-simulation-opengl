@@ -22,6 +22,10 @@
 using namespace std;
 
 std::vector<shapes2d::Circle2D *> particles2D;
+std::vector<shapes2d::Circle2D *> ranges2D;
+int n;
+particle_t *particles;
+double size_world;
 
 //--------------------------------------
 //  Function prototypes
@@ -68,26 +72,25 @@ void myDisplayFunc(void)
 	//	This says that we start from the lower-left corner of the screen
 	glLoadIdentity();
 
-	/* // Create a square obj     x  ,   y  , scale, color, color
-	shapes2d::Square2D square1(1.3f, -3.7f, 1.5f, kRED, kYELLOW);
+	simulateStep(particles, n);
 
-	// Create a square obj     x  ,   y  , scale, color, color
-	shapes2d::Square2D square2(2.5f, 2.5f, 2.f, kPURPLE, kYELLOW);
-
-	// Create a square obj     x  ,   y  , scale, color, color
-	shapes2d::Square2D square3(-2.5f, 1.5f, 3.2f, kWHITE, kYELLOW);
-
-	// Create a polygon with n sides   n, x, y, scale, color, color
-	shapes2d::RegularPolygon2D regularpoly1(5, -2.5f, -1.75f, 2.5f, kRED, kYELLOW);
-
-	// Call draw functions
-	square1.draw();
-	square2.draw();
-	square3.draw();
-	regularpoly1.draw(); */
+	particles2D.clear();
+	// ranges2D.clear();
+	shapes2d::Circle2D *circleAux;
+	// shapes2d::Circle2D *rangeAux;
+	for (int p_i = 0; p_i < n; p_i++)
+	{
+		circleAux = new shapes2d::Circle2D((particles[p_i].x / size_world * 100 - 50), (particles[p_i].y / size_world * 100 - 50), 0.1, kRED, kBLUE);
+		// rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * 100 - 50), (particles[p_i].y / size_world * 100 - 50), 0.1, kBLUE, kRED);
+		particles2D.push_back(circleAux);
+		// ranges2D.push_back(rangeAux);
+	}
 
 	for (auto particle : particles2D)
 		particle->draw();
+
+	// for (auto range : ranges2D)
+	// range->draw();
 
 	//	We were drawing into the back buffer, now it should be brought
 	//	to the forefront.
@@ -189,27 +192,29 @@ int parseArgs(int argc, char **argv)
 int main(int argc, char **argv)
 {
 
-	int n = parseArgs(argc, argv);
+	n = parseArgs(argc, argv);
 
-	particle_t *particles = (particle_t *)malloc(n * sizeof(particle_t));
-	double size = set_size(n);
+	particles = (particle_t *)malloc(n * sizeof(particle_t));
+	size_world = set_size(n);
 	init_particles(n, particles);
-
 	init(n);
+
+	/* 
 	for (int i = 0; i < 10; i++)
 	{
 		simulateStep(particles, n);
 	}
 
-	cout << "Size: " << size << endl;
+	cout << "Size: " << size_world << endl;
 	particles2D.clear();
 	shapes2d::Circle2D *circleAux;
 	for (int p_i = 0; p_i < n; p_i++)
 	{
-		circleAux = new shapes2d::Circle2D((particles[p_i].x / size * 100 - 50), (particles[p_i].y / size * 100 - 50), 0.1, kRED, kBLUE);
+		circleAux = new shapes2d::Circle2D((particles[p_i].x / size_world * 100 - 50), (particles[p_i].y / size_world * 100 - 50), 0.1, kRED, kBLUE);
 		particles2D.push_back(circleAux);
 		cout << "p" << p_i << " x: " << particles[p_i].x << " y: " << particles[p_i].y << endl;
 	}
+ 	*/
 
 	//	Initialize glut and create a new window
 	glutInit(&argc, argv);

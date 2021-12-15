@@ -8,24 +8,26 @@ SHELL='bash'
 #
 
 CC = g++
-CFLAGS = -O3
-LIBS = -IBox2d -IParticle2D -ISimulation
+CFLAGS = -O3 
+OPENGLFLAGS= -lglut -lGLU -lGL -lstdc++ 
+LIBS = -I. -IBox2d -IParticle2D -ISimulation
 
 COMMON=Simulation/common
 SERIAL=Simulation/serial
 BOX2D=Box2D/Box2D
 PARTICLE2D=Particle2D/Particle2D
-MAIN=main
+MAIN=mainGLUT
+EXEC=main
 
 TARGETS = main
 
 all: $(TARGETS)
 
 main: ${MAIN}.o ${COMMON}.o ${SERIAL}.o ${BOX2D}.o ${PARTICLE2D}.o
-	$(CC) -o ${MAIN} $(LIBS) ${MAIN}.o ${COMMON}.o ${SERIAL}.o ${BOX2D}.o ${PARTICLE2D}.o
+	$(CC) -o ${EXEC} $(CFLAGS) ${OPENGLFLAGS} $(LIBS) ${MAIN}.o ${COMMON}.o ${SERIAL}.o ${BOX2D}.o ${PARTICLE2D}.o
 
-main.o: ${MAIN}.cpp 
-	$(CC) -c $(CFLAGS) ${LIBS} ${MAIN}.cpp -o ${MAIN}.o
+mainGLUT.o: ${MAIN}.cpp 
+	$(CC) -c $(CFLAGS) ${OPENGLFLAGS} ${LIBS} ${MAIN}.cpp -o ${MAIN}.o
 common.o: ${COMMON}.cpp ${COMMON}.h
 	$(CC) -c $(CFLAGS) ${LIBS} ${COMMON}.cpp -o ${COMMON}.o
 serial.o: ${SERIAL}.cpp ${SERIAL}.h

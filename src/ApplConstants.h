@@ -3,6 +3,7 @@
 
 #include <string>
 
+
 //  note how the enum element kNB_COLORS *automatically* ends up storing the number of
 //  colors that I defined.
 typedef enum ColorIndex

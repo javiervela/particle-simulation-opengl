@@ -12,11 +12,16 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
+#include <vector>
 #include "common.h"
+#include "serial.h"
 #include "glPlatform.h"
 #include "ApplConstants.h"
+#include "Circle2D.h"
 
 using namespace std;
+
+std::vector<shapes2d::Circle2D *> particles2D;
 
 //--------------------------------------
 //  Function prototypes
@@ -80,6 +85,9 @@ void myDisplayFunc(void)
 	square2.draw();
 	square3.draw();
 	regularpoly1.draw(); */
+
+	for (auto particle : particles2D)
+		particle->draw();
 
 	//	We were drawing into the back buffer, now it should be brought
 	//	to the forefront.
@@ -184,15 +192,24 @@ int main(int argc, char **argv)
 	int n = parseArgs(argc, argv);
 
 	particle_t *particles = (particle_t *)malloc(n * sizeof(particle_t));
-	set_size(n);
+	double size = set_size(n);
 	init_particles(n, particles);
 
-	for (int p_i = 0; p_i < n; p_i++)
+	init(n);
+	for (int i = 0; i < 10; i++)
 	{
-		cout << "p" << p_i << " x: " << particles[p_i].x << " y: " << particles[p_i].y << endl;
+		simulateStep(particles, n);
 	}
 
-	return 0;
+	cout << "Size: " << size << endl;
+	particles2D.clear();
+	shapes2d::Circle2D *circleAux;
+	for (int p_i = 0; p_i < n; p_i++)
+	{
+		circleAux = new shapes2d::Circle2D((particles[p_i].x / size * 100 - 50), (particles[p_i].y / size * 100 - 50), 0.1, kRED, kBLUE);
+		particles2D.push_back(circleAux);
+		cout << "p" << p_i << " x: " << particles[p_i].x << " y: " << particles[p_i].y << endl;
+	}
 
 	//	Initialize glut and create a new window
 	glutInit(&argc, argv);

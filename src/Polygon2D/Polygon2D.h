@@ -155,6 +155,16 @@ namespace shapes2d
          */
         void draw(void) const;
 
+        inline void setFillColor(ColorIndex newFillColor)
+        {
+            fillColor_ = newFillColor;
+        }
+
+        inline void setContourColor(ColorIndex newContourColor)
+        {
+            contourColor_ = newContourColor;
+        }
+
     private:
         // Attributes
 

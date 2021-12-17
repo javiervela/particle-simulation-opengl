@@ -41,6 +41,16 @@ shapes2d::Particle2D *circleAux;
 shapes2d::Circle2D *rangeAux;
 shapes2d::Box2D *box;
 
+// Color Options for Menu
+ColorIndex  gCurrentP_Color = kTRANSPARENT;
+ColorIndex  gCurrentContourP_Color = kBROWN;
+ColorIndex  gCurrentR_Color = kTRANSPARENT;
+ColorIndex  gCurrentContourR_Color = kGREEN;
+void pcolorSelection(ColorIndex colorCode);
+void pcontourColorSelection(ColorIndex colorCode);
+void rcolorSelection(ColorIndex colorCode);
+void rcontourColorSelection(ColorIndex colorCode);
+
 void display(void)
 {
 
@@ -49,7 +59,7 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	simulateStep(particles, n);
-
+	
 	box = new shapes2d::Box2D(0.f, 0.f, sqrt(1.f / 2.f) * SCALE, kTRANSPARENT, kWHITE);
 
 	particles2D.clear();
@@ -57,8 +67,8 @@ void display(void)
 
 	for (int p_i = 0; p_i < n; p_i++)
 	{
-		circleAux = new shapes2d::Particle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), particles[p_i].vx, particles[p_i].vy, 0.01);
-		rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), SCALE * cutoff / size_world, kTRANSPARENT, kRED);
+		circleAux = new shapes2d::Particle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), 0.01, gCurrentP_Color, gCurrentContourP_Color);
+		rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), SCALE * cutoff / size_world, gCurrentR_Color, gCurrentContourR_Color);
 		particles2D.push_back(circleAux);
 		ranges2D.push_back(rangeAux);
 	}
@@ -180,6 +190,27 @@ void myIdleFunc(void)
 {
 	display();
 }
+
+/// this function is used to set color selections
+void pcolorSelection(ColorIndex colorCode)
+{
+    gCurrentP_Color = colorCode;
+}
+
+void pcontourColorSelection(ColorIndex colorCode){
+    gCurrentContourP_Color = colorCode;
+}
+
+    /// this function is used to set color selections
+void rcolorSelection(ColorIndex colorCode)
+{
+    gCurrentR_Color = colorCode;
+}
+
+void rcontourColorSelection(ColorIndex colorCode){
+    gCurrentContourR_Color = colorCode;
+}
+
 
 int main(int argc, char **argv)
 {

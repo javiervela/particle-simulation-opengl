@@ -9,6 +9,11 @@ Particle2D::Particle2D(float x, float y, float ax, float ay, float rad)
 {
 }
 
+Particle2D::Particle2D(float x, float y, float rad, ColorIndex fillC, ColorIndex contourC)
+	: Circle2D(x, y, rad, fillC, contourC)
+{
+}
+
 Particle2D::~Particle2D(void)
 {
 }

@@ -11,6 +11,8 @@ namespace shapes2d
 	{
 	public:
 		Particle2D(float x, float y, float vx, float vy, float rad);
+												// fill			  // contour
+		Particle2D(float x, float y, float rad, ColorIndex fillC, ColorIndex contourC);
 
 		virtual ~Particle2D(void);
 

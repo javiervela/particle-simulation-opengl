@@ -33,3 +33,6 @@
 
 src/main
 .vscode/
+
+#
+**/.DS_Store

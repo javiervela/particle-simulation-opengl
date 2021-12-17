@@ -18,6 +18,7 @@
 #include "glPlatform.h"
 #include "ApplConstants.h"
 #include "Circle2D.h"
+#include "Square2D.h"
 
 using namespace std;
 
@@ -31,6 +32,7 @@ double size_world;
 //  Function prototypes
 //--------------------------------------
 void myDisplayFunc(void);
+void myInit(void);
 void myResizeFunc(int w, int h);
 void myMouseFunc(int b, int s, int x, int y);
 void myKeyboard(unsigned char c, int x, int y);
@@ -50,6 +52,10 @@ const int INIT_WIN_X = 100,
 int winWidth = 500,
 	winHeight = 500;
 
+float gMaxX = 1.f,
+	  gMinX = -1.f,
+	  gMaxY = 1.f,
+	  gMinY = -1.f;
 //	This is the function that does the actual scene drawing
 //	Typically, you shold almost never have to call this function directly yourself.
 //	It will be called automatically by glut, the way in Java the JRE invokes the paint
@@ -74,6 +80,9 @@ void myDisplayFunc(void)
 
 	simulateStep(particles, n);
 
+	shapes2d::Square2D box(0.f, 0.f, 7.f, kTRANSPARENT, kWHITE);
+	box.draw();
+
 	particles2D.clear();
 	// ranges2D.clear();
 	shapes2d::Circle2D *circleAux;
@@ -81,7 +90,7 @@ void myDisplayFunc(void)
 	for (int p_i = 0; p_i < n; p_i++)
 	{
 		circleAux = new shapes2d::Circle2D((particles[p_i].x / size_world * 100 - 50), (particles[p_i].y / size_world * 100 - 50), 0.1, kRED, kBLUE);
-		// rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * 100 - 50), (particles[p_i].y / size_world * 100 - 50), 0.1, kBLUE, kRED);
+		// rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * 10 - 5), (particles[p_i].y / size_world * 10 - 5), 0.1, kBLUE, kRED);
 		particles2D.push_back(circleAux);
 		// ranges2D.push_back(rangeAux);
 	}
@@ -95,6 +104,17 @@ void myDisplayFunc(void)
 	//	We were drawing into the back buffer, now it should be brought
 	//	to the forefront.
 	glutSwapBuffers();
+}
+
+void myInit(void)
+{
+	// Make background WHITE
+	glClearColor(COLOR[ColorIndex::kBLACK][0], COLOR[ColorIndex::kBLACK][1], COLOR[ColorIndex::kBLACK][2], COLOR[ColorIndex::kBLACK][3]);
+
+	// Enable transparency
+	// https://www.opengl.org/archives/resources/faq/technical/transparency.htm
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 //	This callback function is called when the window is resized
@@ -199,23 +219,6 @@ int main(int argc, char **argv)
 	init_particles(n, particles);
 	init(n);
 
-	/* 
-	for (int i = 0; i < 10; i++)
-	{
-		simulateStep(particles, n);
-	}
-
-	cout << "Size: " << size_world << endl;
-	particles2D.clear();
-	shapes2d::Circle2D *circleAux;
-	for (int p_i = 0; p_i < n; p_i++)
-	{
-		circleAux = new shapes2d::Circle2D((particles[p_i].x / size_world * 100 - 50), (particles[p_i].y / size_world * 100 - 50), 0.1, kRED, kBLUE);
-		particles2D.push_back(circleAux);
-		cout << "p" << p_i << " x: " << particles[p_i].x << " y: " << particles[p_i].y << endl;
-	}
- 	*/
-
 	//	Initialize glut and create a new window
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -232,10 +235,8 @@ int main(int argc, char **argv)
 
 	glutTimerFunc(15, myTimerFunc, 0);
 
-	//	Now we enter the main loop of the program and to a large extend
-	//	"lose control" over its execution.  The callback functions that
-	//	we set up earlier will be called when the corresponding event
-	//	occurs
+	myInit();
+
 	glutMainLoop();
 
 	//	This will never be executed (the exit point will be in one of the

@@ -40,7 +40,7 @@ void RegularPolygon2D::draw(void) const
 	//  2.  apply transformation between reference frames
 	//--------------------------------------------------------
 	glTranslatef(x_, y_, 0.f);
-	//glRotatef(45.f, 0.f, 0.f, 1.f);
+	glRotatef(45.f, 0.f, 0.f, 1.f);
 	glScalef(scale_, scale_, 1.f);
 
 

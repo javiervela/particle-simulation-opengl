@@ -16,16 +16,10 @@
 #include "serial.h"
 #include "glPlatform.h"
 #include "ApplConstants.h"
-#include "Circle2D.h"
+#include "Particle2D.h"
 #include "Box2D.h"
 
 using namespace std;
-
-std::vector<shapes2d::Circle2D *> particles2D;
-std::vector<shapes2d::Circle2D *> ranges2D;
-int n;
-particle_t *particles;
-double size_world;
 
 const int INIT_WIN_X = 100,
 		  INIT_WIN_Y = 40;
@@ -35,7 +29,17 @@ float gMaxX = 1.f,
 	  gMaxY = 1.f,
 	  gMinY = -1.f;
 
-float SCALE = 1.5;
+float SCALE = 1;
+
+std::vector<shapes2d::Particle2D *> particles2D;
+std::vector<shapes2d::Circle2D *> ranges2D;
+int n;
+particle_t *particles;
+double size_world;
+
+shapes2d::Particle2D *circleAux;
+shapes2d::Circle2D *rangeAux;
+shapes2d::Box2D *box;
 
 void display(void)
 {
@@ -46,16 +50,15 @@ void display(void)
 
 	simulateStep(particles, n);
 
-	shapes2d::Box2D box(0.f, 0.f, sqrt(1.f / 2.f) * SCALE, kTRANSPARENT, kWHITE);
+	box = new shapes2d::Box2D(0.f, 0.f, sqrt(1.f / 2.f) * SCALE, kTRANSPARENT, kWHITE);
 
 	particles2D.clear();
 	ranges2D.clear();
-	shapes2d::Circle2D *circleAux;
-	shapes2d::Circle2D *rangeAux;
+
 	for (int p_i = 0; p_i < n; p_i++)
 	{
-		circleAux = new shapes2d::Circle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), 0.01, kRED, kBLUE);
-		rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), 2 * cutoff / size_world, kTRANSPARENT, kRED);
+		circleAux = new shapes2d::Particle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), 0.01);
+		rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), SCALE * cutoff / size_world, kTRANSPARENT, kRED);
 		particles2D.push_back(circleAux);
 		ranges2D.push_back(rangeAux);
 	}
@@ -66,7 +69,7 @@ void display(void)
 	for (auto particle : particles2D)
 		particle->draw();
 
-	box.draw();
+	box->draw();
 
 	glutSwapBuffers();
 }

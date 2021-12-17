@@ -1,11 +1,9 @@
-/*-------------------------------------------------------------------------+
- |	This is code that I shamelessly stole from one of you.					|
- |	I just removed some unused code and replaced idleFunc by timerFunc.		|		
- |	All in all it was pretty good, so if it's your code don't feel that		|
- |	I am picking on you when I point out ways to improve parts of the code.	|
- |																			|
- |	jyh. October 5th, 2021													|
- +-------------------------------------------------------------------------*/
+/**
+ * @file main.cpp
+ * @author Javier Vela
+ * @brief Main executable file
+ * @date 2021-10-12
+ */
 
 #include <string>
 #include <iostream>
@@ -13,12 +11,13 @@
 #include <cstring>
 #include <cstdio>
 #include <vector>
+#include <cmath>
 #include "common.h"
 #include "serial.h"
 #include "glPlatform.h"
 #include "ApplConstants.h"
 #include "Circle2D.h"
-#include "Square2D.h"
+#include "Box2D.h"
 
 using namespace std;
 
@@ -28,85 +27,51 @@ int n;
 particle_t *particles;
 double size_world;
 
-//--------------------------------------
-//  Function prototypes
-//--------------------------------------
-void myDisplayFunc(void);
-void myInit(void);
-void myResizeFunc(int w, int h);
-void myMouseFunc(int b, int s, int x, int y);
-void myKeyboard(unsigned char c, int x, int y);
-void myTimerFunc(int val);
-
-//--------------------------------------
-//  Interface constants
-//--------------------------------------
-
 const int INIT_WIN_X = 100,
 		  INIT_WIN_Y = 40;
-
-//--------------------------------------
-//  File-level global variables
-//--------------------------------------
-
-int winWidth = 500,
-	winHeight = 500;
-
+int gWidth = 800, gHeight = 800;
 float gMaxX = 1.f,
 	  gMinX = -1.f,
 	  gMaxY = 1.f,
 	  gMinY = -1.f;
-//	This is the function that does the actual scene drawing
-//	Typically, you shold almost never have to call this function directly yourself.
-//	It will be called automatically by glut, the way in Java the JRE invokes the paint
-//	method of a frame.  Simply, because there is no inheritance/overriding mechanism, we
-//	need to set up this function as a "callback function."  In this demo I do it in the
-//	main function.  A plus side of this way of doing is that the function can be named any way
-//	we want, and that in fact we can have different display functions and change during
-//	the execution of the program the current display function used by glut.
-//
-void myDisplayFunc(void)
+
+float SCALE = 1.5;
+
+void display(void)
 {
-	//	This clears the buffer(s) we draw into.  We will see later this
-	//	semester what this really means
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//	There are two "matrix modes" in OpenGL: "projection", which sets up the
-	//	camera, and "model view" which we have to be in to do any drawing
 	glMatrixMode(GL_MODELVIEW);
-
-	//	This says that we start from the lower-left corner of the screen
 	glLoadIdentity();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	simulateStep(particles, n);
 
-	shapes2d::Square2D box(0.f, 0.f, 7.f, kTRANSPARENT, kWHITE);
-	box.draw();
+	shapes2d::Box2D box(0.f, 0.f, sqrt(1.f / 2.f) * SCALE, kTRANSPARENT, kWHITE);
 
 	particles2D.clear();
-	// ranges2D.clear();
+	ranges2D.clear();
 	shapes2d::Circle2D *circleAux;
-	// shapes2d::Circle2D *rangeAux;
+	shapes2d::Circle2D *rangeAux;
 	for (int p_i = 0; p_i < n; p_i++)
 	{
-		circleAux = new shapes2d::Circle2D((particles[p_i].x / size_world * 100 - 50), (particles[p_i].y / size_world * 100 - 50), 0.1, kRED, kBLUE);
-		// rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * 10 - 5), (particles[p_i].y / size_world * 10 - 5), 0.1, kBLUE, kRED);
+		circleAux = new shapes2d::Circle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), 0.01, kRED, kBLUE);
+		rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), 2 * cutoff / size_world, kTRANSPARENT, kRED);
 		particles2D.push_back(circleAux);
-		// ranges2D.push_back(rangeAux);
+		ranges2D.push_back(rangeAux);
 	}
+
+	for (auto range : ranges2D)
+		range->draw();
 
 	for (auto particle : particles2D)
 		particle->draw();
 
-	// for (auto range : ranges2D)
-	// range->draw();
+	box.draw();
 
-	//	We were drawing into the back buffer, now it should be brought
-	//	to the forefront.
 	glutSwapBuffers();
 }
 
-void myInit(void)
+void myinit(void)
 {
 	// Make background WHITE
 	glClearColor(COLOR[ColorIndex::kBLACK][0], COLOR[ColorIndex::kBLACK][1], COLOR[ColorIndex::kBLACK][2], COLOR[ColorIndex::kBLACK][3]);
@@ -115,19 +80,18 @@ void myInit(void)
 	// https://www.opengl.org/archives/resources/faq/technical/transparency.htm
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(gMinX, gMaxX, gMinY, gMaxY);
 }
 
-//	This callback function is called when the window is resized
-//	(generally by the user of the application).
-//	It is also called when the window is created, why I placed there the
-//	code to set up the virtual camera for this application.
-//
 void myResizeFunc(int w, int h)
 {
 	//	This calls says that I want to use the entire dimension of the window for my drawing.
 	glViewport(0, 0, w, h);
-	winWidth = w;
-	winHeight = h;
+	gWidth = w;
+	gHeight = h;
 
 	//	Here I create my virtual camera.  We are going to do 2D drawing for a while, so what this
 	//	does is define the dimensions (origin and units) of the "virtual world that my viewport
@@ -209,8 +173,19 @@ int parseArgs(int argc, char **argv)
 	return n;
 }
 
+void myIdleFunc(void)
+{
+	display();
+}
+
 int main(int argc, char **argv)
 {
+	// Initialize glut and create a new window
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowSize(gWidth, gHeight);
+	glutInitWindowPosition(INIT_WIN_X, INIT_WIN_Y);
+	glutCreateWindow("Animated Squares");
 
 	n = parseArgs(argc, argv);
 
@@ -219,27 +194,19 @@ int main(int argc, char **argv)
 	init_particles(n, particles);
 	init(n);
 
-	//	Initialize glut and create a new window
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+	// Setup display function
+	glutDisplayFunc(display);
 
-	glutInitWindowSize(winWidth, winHeight);
-	glutInitWindowPosition(INIT_WIN_X, INIT_WIN_Y);
-	glutCreateWindow("Animated Squares");
-
-	//	set up the callbacks
-	glutDisplayFunc(myDisplayFunc);
-	glutReshapeFunc(myResizeFunc);
+	// Setup the callbacks
+	// glutReshapeFunc(myResizeFunc);
 	glutMouseFunc(myMouseFunc);
 	glutKeyboardFunc(myKeyboardFunc);
-
+	glutIdleFunc(myIdleFunc);
 	glutTimerFunc(15, myTimerFunc, 0);
 
-	myInit();
+	myinit();
 
 	glutMainLoop();
 
-	//	This will never be executed (the exit point will be in one of the
-	//	call back functions).
-	return 0;
+	exit(0);
 }

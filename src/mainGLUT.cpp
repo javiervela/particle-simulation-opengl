@@ -57,7 +57,7 @@ void display(void)
 
 	for (int p_i = 0; p_i < n; p_i++)
 	{
-		circleAux = new shapes2d::Particle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), 0.01);
+		circleAux = new shapes2d::Particle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), particles[p_i].vx, particles[p_i].vy, 0.01);
 		rangeAux = new shapes2d::Circle2D((particles[p_i].x / size_world * SCALE - SCALE / 2.f), (particles[p_i].y / size_world * SCALE - SCALE / 2.f), SCALE * cutoff / size_world, kTRANSPARENT, kRED);
 		particles2D.push_back(circleAux);
 		ranges2D.push_back(rangeAux);

@@ -41,7 +41,20 @@ static float COLOR[kNB_COLORS][4] = {
 	{0.5, 0.2, 0.f, 1.f}, //	brown
 	{0.5, 0.5, 0.5, 1.f}, //	grey
 	{1.f, 1.f, 1.f, 0.f}  //	transparent
+};
 
+typedef enum ParticleColorLevel
+{
+	pPrincipal = 0,
+	pMedium,
+	pFast,
+	pNUMBERLEVELS
+} ParticleColorLevel;
+
+static ColorIndex PARTICLE_PALETTE[pNUMBERLEVELS] = {
+	kWHITE,	 // PRINCIPAL
+	kORANGE, // MEDIUM
+	kRED	 // FAST
 };
 
 #endif

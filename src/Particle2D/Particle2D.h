@@ -10,7 +10,7 @@ namespace shapes2d
 	class Particle2D : public Circle2D
 	{
 	public:
-		Particle2D(float x, float y, float rad);
+		Particle2D(float x, float y, float vx, float vy, float rad);
 
 		virtual ~Particle2D(void);
 
@@ -39,11 +39,10 @@ namespace shapes2d
          */
 		Particle2D &operator=(Particle2D &&obj) = delete;
 
-
-		void draw(void) ;
+		void draw(void);
 
 	private:
-		float x_, y_, ax_, ay_;
+		float x_, y_, vx_, vy_;
 	};
 
 }

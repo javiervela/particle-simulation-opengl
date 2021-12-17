@@ -1,13 +1,13 @@
 #ifndef CIRCLE2D_H
 #define CIRCLE2D_H
 
-#include "Ellipse2D.h"
+#include "RegularPolygon2D.h"
 #include "ApplConstants.h"
 
 namespace shapes2d
 {
 
-    class Circle2D : public Ellipse2D
+    class Circle2D : public RegularPolygon2D
     {
         public:
         Circle2D(float x, float y, float rad, ColorIndex

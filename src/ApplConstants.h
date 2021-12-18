@@ -8,6 +8,8 @@
 #ifndef CONTANTS__H
 #define CONTANTS__H
 
+#include <string>
+
 /// 12 color palette
 typedef enum ColorIndex
 {
@@ -42,7 +44,33 @@ static float COLOR[kNB_COLORS][4] = {
 	{0.5, 0.5, 0.5, 1.f}, //	grey
 	{1.f, 1.f, 1.f, 0.f}  //	transparent
 };
+static const std::string colorMenuStr[kNB_COLORS] =	{	"White",
+														"Black",
+														"Red",
+														"Green",
+														"Blue",
+														"Yellow",
+                                                        "Purple",
+                                                        "Orange",
+                                                        "Pink",
+                                                        "Brown",
+														"Grey",
+														"Transparent"
+													};
 
+static int  colorMenuCode[kNB_COLORS] = {   kWHITE,
+											kBLACK,
+											kRED,
+											kGREEN,
+											kBLUE,
+											kYELLOW,
+											kPURPLE,
+											kORANGE,
+											kPINK,
+											kBROWN,
+											kGREY,
+											kTRANSPARENT,
+                                        };   
 typedef enum ParticleColorLevel
 {
 	pPrincipal = 0,

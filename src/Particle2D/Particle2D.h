@@ -9,8 +9,13 @@ namespace shapes2d
 
 	class Particle2D : public Circle2D
 	{
-	public:
-		Particle2D(float x, float y, float vx, float vy, float rad);
+	public:												
+		Particle2D(float x, float y, 
+				   float vx, float vy, float rad, 
+				   			// fill			  // contour
+				   ColorIndex fillC, ColorIndex contourC,
+				  // particle primary color,   medium speed,	   fast speed
+				   ColorIndex primaryC, ColorIndex mediumC, ColorIndex fastC);
 
 		virtual ~Particle2D(void);
 
@@ -43,6 +48,7 @@ namespace shapes2d
 
 	private:
 		float x_, y_, vx_, vy_;
+		ColorIndex primary_, medium_, fast_;
 	};
 
 }

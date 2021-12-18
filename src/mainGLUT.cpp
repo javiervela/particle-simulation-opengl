@@ -71,8 +71,10 @@ void colorSelection(ColorIndex colorCode);
 void pspeedColorSelection(ColorIndex colorCode);
 void mspeedColorSelection(ColorIndex colorCode);
 void fspeedColorSelection(ColorIndex colorCode);
+void ringColorEnable(ColorIndex colorCode);
 
 void menuHandler(int value);
+void ringMenuHandler(int value);
 void pspeedMenuHandler(int value);
 void mspeedMenuHandler(int value);
 void fspeedMenuHandler(int value);
@@ -159,10 +161,13 @@ void myinit(void)
     gluOrtho2D(gMinX, gMaxX, gMinY, gMaxY);
 
     /// Create Menus
-    int menu, pcolorSubMenu, mspeedColorSubMenu, fspeedSubMenu;
+    int menu, pcolorSubMenu, mspeedColorSubMenu, fspeedSubMenu, ringMenu;
 
     /// submenu for color selection choices
     ///  Note how I use my arrays defined in ApplConstants.h to automatically generate my menus
+	ringMenu = glutCreateMenu(ringMenuHandler);
+	glutAddMenuEntry("clear ring", 11); //transparent color
+	glutAddMenuEntry("show ring", 2); // kRed
     pcolorSubMenu = glutCreateMenu(pspeedMenuHandler);
 	for (int k=0; k<kNB_COLORS; k++)
    		glutAddMenuEntry(colorMenuStr[k].c_str(), colorMenuCode[k] );
@@ -178,6 +183,7 @@ void myinit(void)
     /// Main menu that the submenus are connected to
     menu = glutCreateMenu(menuHandler);
     // glutAddMenuEntry("Clear Screen", CLEAR_MENU);
+	glutAddSubMenu("Ring Opt.", ringMenu);
     glutAddSubMenu("Particle Color", pcolorSubMenu);
     glutAddSubMenu("Medium Speed Color", mspeedColorSubMenu);
 	glutAddSubMenu("Fast Speed Color", fspeedSubMenu);
@@ -318,6 +324,15 @@ void myIdleFunc(void)
 }
 
 /**
+ * @brief Enable ring color of the particles
+ * 
+ * @param colorCode 
+ */
+void ringColorEnable(ColorIndex colorCode){
+	rcontourColorSelection(colorCode);
+}
+
+/**
  * @brief set the color of the particles. 
  * @brief This function has the same effect as `pspeedColorSelection()`
  */
@@ -390,6 +405,26 @@ void menuHandler(int value)
     }
 }
 
+/** 
+ *	@brief Menu event handling
+ */
+void ringMenuHandler(int value)
+{
+    switch (value)
+    {
+        case kTRANSPARENT:
+			ringColorEnable(kTRANSPARENT);
+            break;
+
+        case kRED:
+            ringColorEnable(kRED);
+            break;
+
+        default:
+            break;
+
+    }
+}
 /**
  * @brief Menu event handling for primary speed color
  */

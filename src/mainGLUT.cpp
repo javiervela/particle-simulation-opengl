@@ -177,7 +177,7 @@ void myinit(void)
 
     /// Main menu that the submenus are connected to
     menu = glutCreateMenu(menuHandler);
-    glutAddMenuEntry("Clear Screen", CLEAR_MENU);
+    // glutAddMenuEntry("Clear Screen", CLEAR_MENU);
     glutAddSubMenu("Particle Color", pcolorSubMenu);
     glutAddSubMenu("Medium Speed Color", mspeedColorSubMenu);
 	glutAddSubMenu("Fast Speed Color", fspeedSubMenu);
@@ -233,7 +233,7 @@ void myMouseFunc(int button, int state, int x, int y)
 		}
 		else if (state == GLUT_UP)
 		{
-			exit(0);
+			// exit(0);
 		}
 		break;
 
@@ -255,6 +255,10 @@ void myKeyboardFunc(unsigned char c, int x, int y)
 	switch (c)
 	{
 	case 27:
+		exit(0);
+		break;
+
+	case 113:
 		exit(0);
 		break;
 
